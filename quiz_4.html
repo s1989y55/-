@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二等無人航空機操縦士 学科試験 模擬問題（試験モード）</title>
+    <meta name="description" content="二等無人航空機操縦士の学科試験対策向け模擬問題（50問・3択形式）。">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 960px;
+            margin: 0 auto;
+            color: #333;
+            background-color: #f0f0f5;
+            padding-top: 60px; /* タイマー固定のためのスペース */
+        }
+        h1 {
+            color: #00796b;
+            text-align: center;
+            border-bottom: 4px solid #00796b;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+
+        /* --- タイマー表示エリア (画面上部に固定) --- */
+        #timer {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #d32f2f; /* 赤色系 */
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            z-index: 1000; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+        /* --- タイマー表示エリア 終 --- */
+
+        .quiz-container {
+            padding: 10px;
+        }
+        .question-block {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #c8e6c9;
+            border-left: 6px solid #388e3c; 
+            border-radius: 5px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: none; /* 初期状態では全て非表示 */
+        }
+        .question-block.active {
+             display: block; /* 表示中の問題 */
+        }
+        h2 {
+            font-size: 1.25em;
+            color: #388e3c;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .options li {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .options li:hover {
+            background-color: #f0f0f5;
+        }
+        
+        /* 選択済みの色 */
+        .options li.selected {
+            background-color: #e0f2f1; /* Light teal */
+            font-weight: bold;
+        }
+        
+        /* 採点後の正解・不正解ハイライト */
+        .options li.correct-highlight {
+            background-color: #c8e6c9 !important; /* Green */
+            font-weight: bold;
+        }
+        .options li.incorrect-highlight {
+            background-color: #ffcdd2 !important; /* Red */
+            font-weight: bold;
+        }
+        
+        .answer-content {
+            margin-top: 15px;
+            padding: 15px;
+            border-top: 2px solid #00796b;
+            background-color: #e0f2f1;
+            border-radius: 0 0 5px 5px;
+            display: none !important; /* 初期状態では非表示 (採点後に表示) */
+        }
+        .correct-answer {
+            font-weight: bold;
+            color: #d32f2f;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .rationale {
+            font-size: 0.95em;
+            color: #333;
+        }
+        .hint {
+            margin-top: 10px;
+            font-style: italic;
+            color: #555;
+        }
+        .back-to-top {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            font-size: 1.1em;
+        }
+
+        /* --- ナビゲーションボタン --- */
+        .quiz-navigation {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 50px;
+        }
+
+        .nav-button {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            margin: 0 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #00796b;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background-color: #004d40;
+        }
+
+        .nav-button:disabled {
+            background-color: #b0bec5;
+            cursor: not-allowed;
+        }
+        /* --- ナビゲーションボタン 終 --- */
+    </style>
+</head>
+<body>
+    
+    <div id="timer">残り時間: 30:00</div>
+    
+    <h1>二等無人航空機操縦士 学科試験 模擬問題（パターン4）</h1>
+
+    <div class="quiz-container">
+
+        <div class="quiz-container">
+        
+        <div class="question-block" id="q1" data-correct="A">
+            <h2>Q.1. 機体を改造し、最大離陸重量が25kgから30kgになった場合、航空法上、どのような手続きが必要になるか。正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q1" data-answer="A">A. 機体登録の変更登録申請と、特定飛行の許可承認内容の変更が必要になる。</li>
+                <li data-question="q1" data-answer="B">B. 25kg以上になっても特定飛行の許可承認は不要である。</li>
+                <li data-question="q1" data-answer="C">C. 離陸重量が100gを超えていれば、特に追加の手続きは不要である。</li>
+            </ul>
+            <div class="answer-content" id="answer-q1">
+                <p><span class="correct-answer">【正解】A</span></p>
+                <div class="rationale">
+                    <p>【解説】最大離陸重量が25kg以上になると、特定飛行を行う場合は**機体認証**が必要になる場合があります。また、登録情報（重量）の変更手続きも必須です。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q2" data-correct="B">
+            <h2>Q.2. 無人航空機を飛行させる前に、気象情報の収集を行う目的として、最も重要なものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q2" data-answer="A">A. 飛行中のライブ映像に映る雲の形を予測するため。</li>
+                <li data-question="q2" data-answer="B">B. 飛行の安全性を確保し、特に**風速や視程**が許容範囲内であるか確認するため。</li>
+                <li data-question="q2" data-answer="C">C. 飛行後のログデータに記録する気温を事前に知っておくため。</li>
+            </ul>
+            <div class="answer-content" id="answer-q2">
+                <p><span class="correct-answer">【正解】B</span></p>
+                <div class="rationale">
+                    <p>【解説】風速、風向、視程、雷雲の有無、降水量は、無人航空機の安全な飛行に直接影響するため、事前に正確に把握することが重要です。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q3" data-correct="C">
+            <h2>Q.3. 飛行計画の通報が義務付けられている空域・飛行方法として、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q3" data-answer="A">A. 常に全ての無人航空機の飛行について、事前に通報が必要である。</li>
+                <li data-question="q3" data-answer="B">B. 趣味の飛行で、高度150m未満の飛行であれば通報は不要である。</li>
+                <li data-question="q3" data-answer="C">C. **特定飛行**（例：DID地区上空、夜間飛行、目視外飛行など）を行う場合。</li>
+            </ul>
+            <div class="answer-content" id="answer-q3">
+                <p><span class="correct-answer">【正解】C</span></p>
+                <div class="rationale">
+                    <p>【解説】特定飛行を行う際は、飛行前に飛行計画を国土交通大臣に届け出（通報）ることが義務付けられています。この通報は、DIPSなどのシステムを通じて行います。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q4" data-correct="A">
+            <h2>Q.4. 無人航空機の機体構造のうち、飛行方向を制御するために**揚力を左右非対称**に変化させる部品として、主に固定翼機に用いられるものはどれか。</h2>
+            <ul class="options">
+                <li data-question="q4" data-answer="A">A. エルロン（補助翼）</li>
+                <li data-question="q4" data-answer="B">B. ラダー（方向舵）</li>
+                <li data-question="q4" data-answer="C">C. エレベーター（昇降舵）</li>
+            </ul>
+            <div class="answer-content" id="answer-q4">
+                <p><span class="correct-answer">【正解】A</span></p>
+                <div class="rationale">
+                    <p>【解説】エルロンは主翼の左右後端にあり、それぞれが逆方向に動作することで、片翼の揚力を増やし、もう一方の揚力を減らすことで機体をロール（傾ける）させます。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q5" data-correct="B">
+            <h2>Q.5. 飛行中に機体のGPS測位ができなくなった場合、操縦者が直ちに取るべき行動として、最も適切なものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q5" data-answer="A">A. 地図アプリを開き、手動で現在地を特定しようとする。</li>
+                <li data-question="q5" data-answer="B">B. 姿勢制御モード（ATTIモードなど）に切り替え、手動操縦により安全な場所に帰還・着陸させる。</li>
+                <li data-question="q5" data-answer="C">C. GPSが復帰するまで、その場に留まり、飛行を継続する。</li>
+            </ul>
+            <div class="answer-content" id="answer-q5">
+                <p><span class="correct-answer">【正解】B</span></p>
+                <div class="rationale">
+                    <p>【解説】GPSが失われると自動的な位置維持ができなくなるため、操縦者は直ちに手動での安定飛行に切り替え、機体を目視できる範囲で安全に操作し、速やかに着陸させることが求められます。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q6" data-correct="C">
+            <h2>Q.6. 航空機が接近してきた場合、無人航空機操縦者が優先すべき行動として、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q6" data-answer="A">A. 無人航空機が飛行禁止空域外にいれば、そのまま飛行を継続する。</li>
+                <li data-question="q6" data-answer="B">B. 航空機の進路を妨げないよう、可能な限り遠ざかる。</li>
+                <li data-question="q6" data-answer="C">C. 航空機を優先し、**直ちに地上へ降下させ着陸**させること。</li>
+            </ul>
+            <div class="answer-content" id="answer-q6">
+                <p><span class="correct-answer">【正解】C</span></p>
+                <div class="rationale">
+                    <p>【解説】航空法に基づき、無人航空機は常に有人航空機の飛行を妨げてはなりません。有人機を発見した場合は、速やかに降下・着陸させることが義務付けられています。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q7" data-correct="A">
+            <h2>Q.7. 飛行する空域を管轄する**空港事務所長**への許可が必要な空域として、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q7" data-answer="A">A. 空港等の周辺の上空の空域（進入表面、転移表面などの制限表面上空の空域）。</li>
+                <li data-question="q7" data-answer="B">B. 地表または水面から150m以上の高さの空域。</li>
+                <li data-question="q7" data-answer="C">C. 人口集中地区（DID地区）の上空。</li>
+            </ul>
+            <div class="answer-content" id="answer-q7">
+                <p><span class="correct-answer">【正解】A</span></p>
+                <div class="rationale">
+                    <p>【解説】空港周辺の空域での飛行許可・承認は、通常、国土交通大臣ですが、特例としてその空域を管轄する空港事務所長が行います。150m以上やDID地区は、国土交通大臣（DIPS経由）への許可承認が必要です。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q8" data-correct="B">
+            <h2>Q.8. 無人航空機を夜間に飛行させる場合に必要な、機体の装備に関する記述として、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q8" data-answer="A">A. 機体全体を反射材で覆う必要がある。</li>
+                <li data-question="q8" data-answer="B">B. 進行方向を判断できる灯火（ライト）を装備し、継続的に点灯させること。</li>
+                <li data-question="q8" data-answer="C">C. 夜間飛行では補助者がいれば灯火は不要である。</li>
+            </ul>
+            <div class="answer-content" id="answer-q8">
+                <p><span class="correct-answer">【正解】B</span></p>
+                <div class="rationale">
+                    <p>【解説】夜間飛行では、操縦者が機体の姿勢や向き、位置を正確に把握できるよう、十分な明るさの灯火を装備し、継続的に点灯させることが求められます。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q9" data-correct="A">
+            <h2>Q.9. Li-Po（リチウムポリマー）バッテリーの保管方法として、最も安全なものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q9" data-answer="A">A. 満充電や過放電を避け、**推奨されるストレージ電圧**（約3.8V/セル）で、耐火性の容器に保管する。</li>
+                <li data-question="q9" data-answer="B">B. 性能を保つため、常に満充電の状態で、直射日光の当たる場所に保管する。</li>
+                <li data-question="q9" data-answer="C">C. 使用しない時は、完全に放電させてからビニール袋に入れて保管する。</li>
+            </ul>
+            <div class="answer-content" id="answer-q9">
+                <p><span class="correct-answer">【正解】A</span></p>
+                <div class="rationale">
+                    <p>【解説】Li-Poバッテリーは満充電状態が長時間続くと劣化が早まり、膨張や発火のリスクが高まるため、専用の充電器でストレージ電圧にして耐火バッグなどに入れて保管するのが安全です。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q10" data-correct="C">
+            <h2>Q.10. 飛行計画を立てる際、フライトエリアの**障害物**の調査として、最も適切なものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q10" data-answer="A">A. Googleマップなどの衛星写真で確認すれば、電線やアンテナなどの障害物は全て特定できる。</li>
+                <li data-question="q10" data-answer="B">B. 現地調査は不要で、飛行経路を設定するだけで十分である。</li>
+                <li data-question="q10" data-answer="C">C. 地図情報に加え、**現地に赴いて電線、樹木、アンテナ**などの障害物を目視で確認する。</li>
+            </ul>
+            <div class="answer-content" id="answer-q10">
+                <p><span class="correct-answer">【正解】C</span></p>
+                <div class="rationale">
+                    <p>【解説】地図情報だけでは電線などの細い障害物を見落としやすいため、実際に飛行場所に出向き、周辺の状況を詳細に確認する**現地調査（下見）**が必須です。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q11" data-correct="B">
+            <h2>Q.11. 航空法における「**特定飛行**」の定義に含まれないものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q11" data-answer="A">A. 人口集中地区（DID地区）の上空での飛行。</li>
+                <li data-question="q11" data-answer="B">B. 地表から**100m**の高さの空域で、人または家屋のない場所での飛行。</li>
+                <li data-question="q11" data-answer="C">C. 夜間における飛行。</li>
+            </ul>
+            <div class="answer-content" id="answer-q11">
+                <p><span class="correct-answer">【正解】B</span></p>
+                <div class="rationale">
+                    <p>【解説】特定飛行は、飛行禁止空域（空港周辺、150m以上、DID地区）での飛行、または特定の方法（夜間、目視外、人・物件から30m未満など）での飛行を指します。150m未満の空域で、人・家屋のない場所での飛行は、その他の規制（30m未満など）に該当しなければ特定飛行には含まれません。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q12" data-correct="A">
+            <h2>Q.12. 無人航空機が飛行中に**墜落**などの事故を起こした場合、操縦者が負う法的責任として、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q12" data-answer="A">A. 民事上の損害賠償責任、刑事上の業務上過失致死傷罪、行政上の行政指導・罰則を受ける可能性がある。</li>
+                <li data-question="q12" data-answer="B">B. 刑事上の責任のみを負い、行政上の罰則はない。</li>
+                <li data-question="q12" data-answer="C">C. 損害賠償は保険会社が全て対応するため、操縦者が責任を負うことはない。</li>
+            </ul>
+            <div class="answer-content" id="answer-q12">
+                <p><span class="correct-answer">【正解】A</span></p>
+                <div class="rationale">
+                    <p>【解説】事故を起こした場合、操縦者は被害者への賠償（民事）、過失による法違反（刑事）、行政処分（行政）の**三重の責任**を負う可能性があります。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q13" data-correct="B">
+            <h2>Q.13. 遠隔操縦を行うための送信機（プロポ）のバッテリー残量に関する、安全を確保するための記述として、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q13" data-answer="A">A. 機体のバッテリー残量のみを気にすればよく、送信機の残量は気にしなくてよい。</li>
+                <li data-question="q13" data-answer="B">B. 送信機の電源が途絶えると機体との通信が途絶えるため、飛行前に十分な残量を確認する。</li>
+                <li data-question="q13" data-answer="C">C. 送信機は機体から電力を供給されるため、充電は不要である。</li>
+            </ul>
+            <div class="answer-content" id="answer-q13">
+                <p><span class="correct-answer">【正解】B</span></p>
+                <div class="rationale">
+                    <p>【解説】送信機のバッテリー切れは、機体の制御不能（フェイルセーフ発動）に直結する重大なリスクです。必ず飛行前に十分な残量を確認し、予備バッテリーの準備も検討すべきです。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q14" data-correct="C">
+            <h2>Q.14. 風が強い日（機体の許容風速を超える）に飛行を試みた場合のリスクとして、最も適切なものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q14" data-answer="A">A. 飛行速度は速くなるが、特に問題はない。</li>
+                <li data-question="q14" data-answer="B">B. バッテリー消費が少なくなり、飛行時間が伸びる。</li>
+                <li data-question="q14" data-answer="C">C. 機体が風に流され制御不能になったり、姿勢維持のため**バッテリーを過剰に消費**し墜落のリスクが高まる。</li>
+            </ul>
+            <div class="answer-content" id="answer-q14">
+                <p><span class="correct-answer">【正解】C</span></p>
+                <div class="rationale">
+                    <p>【解説】強風下では、機体が姿勢を保つためにモーター出力を上げ続けるため、バッテリー消費が激しくなり、帰還に必要な電力が不足する恐れがあります。許容風速を超えた場合は飛行を中止すべきです。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q15" data-correct="A">
+            <h2>Q.15. リスクアセスメント（危険性の評価）の目的として、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q15" data-answer="A">A. 潜在的な危険を事前に特定し、事故を防ぐための**安全対策を計画**するために行う。</li>
+                <li data-question="q15" data-answer="B">B. 飛行後のログデータを解析し、問題点を洗い出すために行う。</li>
+                <li data-question="q15" data-answer="C">C. 国土交通大臣に提出する報告書を作成するためにのみ行う。</li>
+            </ul>
+            <div class="answer-content" id="answer-q15">
+                <p><span class="correct-answer">【正解】A</span></p>
+                <div class="rationale">
+                    <p>【解説】リスクアセスメントは、飛行環境や方法に潜む危険（強風、電波障害、第三者の存在など）を事前に評価し、それに対する具体的な対策（安全確保措置）を講じるために行う、安全運航の基礎となる行為です。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q16" data-correct="B">
+            <h2>Q.16. 飛行前に義務付けられている**機体の点検項目**として、最も重要なものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q16" data-answer="A">A. 機体の製造年月日を確認する。</li>
+                <li data-question="q16" data-answer="B">B. プロペラ、モーター、バッテリー、機体各部に**緩み、破損、異常**がないか確認する。</li>
+                <li data-question="q16" data-answer="C">C. 機体のロゴがきれいに印刷されているか確認する。</li>
+            </ul>
+            <div class="answer-content" id="answer-q16">
+                <p><span class="correct-answer">【正解】B</span></p>
+                <div class="rationale">
+                    <p>【解説】飛行中の部品の脱落や故障は重大な事故につながるため、飛行直前の点検で機体の物理的な状態に異常がないことを確認することが極めて重要です。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q17" data-correct="A">
+            <h2>Q.17. 無人航空機が通信不能に陥った際、事前に設定された**フェイルセーフ機能**が発動する目的として、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q17" data-answer="A">A. 機体を**事前に設定された地点**に自動で帰還・着陸させ、機体の紛失や第三者への危害を防ぐ。</li>
+                <li data-question="q17" data-answer="B">B. 通信が回復するまで、その場でホバリングを継続させる。</li>
+                <li data-question="q17" data-answer="C">C. 信号が弱い方向へ飛行し、通信を回復させることを試みる。</li>
+            </ul>
+            <div class="answer-content" id="answer-q17">
+                <p><span class="correct-answer">【正解】A</span></p>
+                <div class="rationale">
+                    <p>【解説】フェイルセーフ（Fail-Safe）機能は、通信途絶などの異常発生時に、設定された安全な行動（RTH: Return To Homeなど）を自動で実行し、被害を最小限に抑えるための機能です。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q18" data-correct="C">
+            <h2>Q.18. 地表または水面から150m以上の空域を飛行させる場合、**国土交通大臣の許可**が必要となる理由として、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q18" data-answer="A">A. 150m以上ではWi-Fiの電波が弱くなるため。</li>
+                <li data-question="q18" data-answer="B">B. 高度が上がるほど、無人航空機のバッテリーを多く消費するため。</li>
+                <li data-question="q18" data-answer="C">C. 有人航空機が飛行する空域に近づき、**衝突のリスク**が高まるため。</li>
+            </ul>
+            <div class="answer-content" id="answer-q18">
+                <p><span class="correct-answer">【正解】C</span></p>
+                <div class="rationale">
+                    <p>【解説】150m以上の空域は、ヘリコプターなどの有人航空機が航行する可能性がある空域であり、無人航空機との衝突を避けるために飛行が厳しく規制されています。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q19" data-correct="B">
+            <h2>Q.19. 気温が低い冬の朝に飛行させる際、特に注意すべきこととして、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q19" data-answer="A">A. 低温はモーターの性能を向上させるため、通常よりも高速で飛行できる。</li>
+                <li data-question="q19" data-answer="B">B. 低温により**バッテリーの性能が低下**し、飛行時間が短くなること。</li>
+                <li data-question="q19" data-answer="C">C. 気温が低いと機体が重くなるため、離陸前に機体から雪や霜を払い落とす。</li>
+            </ul>
+            <div class="answer-content" id="answer-q19">
+                <p><span class="correct-answer">【正解】B</span></p>
+                <div class="rationale">
+                    <p>【解説】リチウムイオン/ポリマーバッテリーは低温に弱く、急激な電圧降下や容量の低下が起こりやすいため、飛行時間の短縮や予期せぬバッテリー警告に特に注意が必要です。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block" id="q20" data-correct="C">
+            <h2>Q.20. **事故・重大インシデント**が発生した場合、操縦者が行うべき対応として、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q20" data-answer="A">A. まず機体を回収し、損傷していないことを確認してから国土交通大臣に報告する。</li>
+                <li data-question="q20" data-answer="B">B. 現場の状況を隠蔽し、速やかに立ち去る。</li>
+                <li data-question="q20" data-answer="C">C. 負傷者の救護や二次災害の防止を優先し、その後**国土交通大臣へ速やかに報告**する。</li>
+            </ul>
+            <div class="answer-content" id="answer-q20">
+                <p><span class="correct-answer">【正解】C</span></p>
+                <div class="rationale">
+                    <p>【解説】人命の安全確保と二次被害の防止が最優先です。その後、定められた期限内に事故の状況や原因について国土交通大臣に報告する義務があります。</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="question-block" id="q50" data-correct="B">
+            <h2>Q.50. 無人航空機を飛行させる際、**飲酒等**により正常な判断ができない状態で飛行させることに関する記述として、正しいものを選びなさい。</h2>
+            <ul class="options">
+                <li data-question="q50" data-answer="A">A. 飲酒運転ではないため、多少の飲酒であれば問題ない。</li>
+                <li data-question="q50" data-answer="B">B. 正常な判断能力を失わせる恐れのあるアルコールの影響下では、**絶対に飛行させてはならない**（航空法違反）。</li>
+                <li data-question="q50" data-answer="C">C. 飛行前の点検を完了していれば、飲酒後でも飛行できる。</li>
+            </ul>
+            <div class="answer-content" id="answer-q50">
+                <p><span class="correct-answer">【正解】B</span></p>
+                <div class="rationale">
+                    <p>【解説】航空法により、アルコール又は薬物の影響により、正常な飛行ができないおそれがある状態で無人航空機を飛行させることは**禁止**されています。これは人命に関わる重大なルールです。</p>
+                </div>
+            </div>
+        </div>
+
+        
+        </div>
+    
+    <div class="quiz-navigation">
+        <button id="prev-button" class="nav-button" disabled>前の問題</button>
+        <span id="question-indicator">1 / 50</span>
+        <button id="next-button" class="nav-button">次の問題</button>
+        <button id="submit-button" class="nav-button" style="background-color: #ff9800; display: none;">採点して終了</button>
+    </div>
+
+    <p class="back-to-top"><a href="index.html">トップへ戻る</a></p>
+
+    <script>
+        const quizContainer = document.querySelector('.quiz-container');
+        // すべての問題ブロックを取得
+        const questionBlocks = document.querySelectorAll('.question-block');
+        const totalQuestions = questionBlocks.length;
+        let currentQuestionIndex = 0;
+        let timeLeft = 30 * 60; // 30分を秒に換算
+        let timerInterval;
+
+        const timerDisplay = document.getElementById('timer');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const submitButton = document.getElementById('submit-button');
+        const indicator = document.getElementById('question-indicator');
+        
+        // ユーザーの解答を格納する配列（例: ['A', 'C', 'B', ...]）
+        const userAnswers = new Array(totalQuestions).fill(null);
+
+        // 正解データを取得
+        const correctAnswers = {};
+        questionBlocks.forEach(block => {
+            const qId = block.id; // e.g., 'q1'
+            const answerElement = block.querySelector('.correct-answer');
+            // 【正解】A のようなテキストから 'A' を抽出
+            const correctAnswerText = answerElement ? answerElement.textContent.replace('【正解】', '').trim() : null;
+            correctAnswers[qId] = correctAnswerText;
+            
+            // 選択肢にイベントリスナーを設定
+            block.querySelectorAll('.options li').forEach(option => {
+                // 既存のイベントリスナー（もしあれば）を削除し、新しいものを追加
+                option.removeEventListener('click', handleOptionClick); 
+                option.addEventListener('click', handleOptionClick);
+            });
+        });
+
+        // 選択肢クリック時の処理（解答記録とハイライト）
+        function handleOptionClick(event) {
+            const selectedOption = event.target;
+            const questionId = selectedOption.dataset.question; // e.g., 'q1'
+            const selectedAnswer = selectedOption.dataset.answer; // e.g., 'A'
+            const questionIndex = parseInt(questionId.substring(1)) - 1; // 0-based index
+
+            // 1. 解答を記録
+            userAnswers[questionIndex] = selectedAnswer;
+
+            // 2. 選択肢のハイライトを更新（同じ問題内の他の選択肢をリセット）
+            const currentQuestionBlock = questionBlocks[questionIndex];
+            currentQuestionBlock.querySelectorAll('.options li').forEach(option => {
+                option.classList.remove('selected'); 
+            });
+            selectedOption.classList.add('selected'); // 選択されたことを示す色
+        }
+
+
+        // タイマー機能
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `残り時間: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = '試験終了！時間切れです。';
+                    finishQuiz(true); // 時間切れで終了
+                } else if (timeLeft <= 5 * 60) {
+                    timerDisplay.style.backgroundColor = '#ff9800'; // 5分前はオレンジに
+                }
+            }, 1000);
+        }
+
+        // 問題の表示を更新（一問一答表示のコア機能）
+        function updateQuestionDisplay() {
+            questionBlocks.forEach((block, index) => {
+                block.style.display = (index === currentQuestionIndex) ? 'block' : 'none';
+                block.classList.remove('active');
+            });
+            if (questionBlocks[currentQuestionIndex]) {
+                questionBlocks[currentQuestionIndex].classList.add('active');
+            }
+
+            // インジケーターの更新
+            indicator.textContent = `${currentQuestionIndex + 1} / ${totalQuestions}`;
+
+            // ナビゲーションボタンの状態更新
+            prevButton.disabled = currentQuestionIndex === 0;
+            // 最後の問題の場合は「次の問題」を非表示にし、「採点して終了」を表示
+            nextButton.style.display = currentQuestionIndex < totalQuestions - 1 ? 'inline-block' : 'none';
+            submitButton.style.display = currentQuestionIndex === totalQuestions - 1 ? 'inline-block' : 'none';
+            
+            // 画面を一番上に戻す (タイマーの下)
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+            // 選択済みの選択肢をハイライト
+            const selectedAnswer = userAnswers[currentQuestionIndex];
+            if (questionBlocks[currentQuestionIndex]) {
+                questionBlocks[currentQuestionIndex].querySelectorAll('.options li').forEach(option => {
+                    option.classList.remove('selected'); // リセット
+                    if (option.dataset.answer === selectedAnswer) {
+                        option.classList.add('selected'); // 選択済みハイライト
+                    }
+                });
+            }
+        }
+
+        // 次の問題へ
+        nextButton.addEventListener('click', () => {
+            if (currentQuestionIndex < totalQuestions - 1) {
+                currentQuestionIndex++;
+                updateQuestionDisplay();
+            }
+        });
+
+        // 前の問題へ
+        prevButton.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                updateQuestionDisplay();
+            }
+        });
+        
+        // 採点して終了
+        submitButton.addEventListener('click', () => {
+            if (confirm('試験を終了し、採点結果を表示しますか？')) {
+                clearInterval(timerInterval);
+                finishQuiz(false);
+            }
+        });
+
+        // 採点処理
+        function finishQuiz(isTimeout) {
+            let correctCount = 0;
+            let resultHtml = `<h2>${isTimeout ? '時間切れ！' : '試験終了！'} 採点結果</h2>`;
+            
+            questionBlocks.forEach((block, index) => {
+                const qId = block.id;
+                const userAnswer = userAnswers[index];
+                const correctAnswer = correctAnswers[qId];
+                const isCorrect = userAnswer === correctAnswer;
+                
+                // 採点結果を計算
+                if (isCorrect) {
+                    correctCount++;
+                }
+
+                // 解答と解説を表示
+                block.querySelector('.answer-content').style.display = 'block';
+
+                // 選択肢のハイライトを更新
+                block.querySelectorAll('.options li').forEach(option => {
+                    option.classList.remove('selected', 'correct-highlight', 'incorrect-highlight');
+                    option.style.fontWeight = 'normal';
+                    
+                    if (option.dataset.answer === correctAnswer) {
+                        // 正解を緑で強調
+                        option.classList.add('correct-highlight'); 
+                        option.style.fontWeight = 'bold';
+                    } else if (option.dataset.answer === userAnswer && !isCorrect) {
+                        // 不正解の選択肢を赤で強調
+                        option.classList.add('incorrect-highlight');
+                        option.style.fontWeight = 'bold';
+                    }
+                });
+            });
+
+            const passMark = Math.ceil(totalQuestions * 0.7); // 7割正解を合格基準と仮定
+            const isPassed = correctCount >= passMark;
+            
+            resultHtml += `<p style="font-size: 1.5em; font-weight: bold;">あなたの得点: ${correctCount} / ${totalQuestions} 問</p>`;
+            resultHtml += `<p style="font-size: 1.5em; font-weight: bold; color: ${isPassed ? '#388e3c' : '#d32f2f'};">${isPassed ? '🎉 合格です！' : '残念ながら不合格です。'}</p>`;
+            resultHtml += `<p>合格基準: ${totalQuestions}問中 ${passMark}問以上</p>`;
+            resultHtml += '<p>以下にすべての問題の正解と解説が表示されます。問題を一つずつ見返すか、ページをスクロールして確認してください。</p>';
+
+            // 採点結果を画面に表示し、ナビゲーションを非表示に
+            document.querySelector('h1').insertAdjacentHTML('afterend', resultHtml);
+            document.querySelector('.quiz-navigation').style.display = 'none';
+            document.querySelector('#timer').style.display = 'none';
+
+            // すべての問題を表示
+            questionBlocks.forEach(block => {
+                block.style.display = 'block';
+                block.classList.add('active'); // すべてのスタイルを適用するため
+            });
+            
+            // 画面を一番上に戻す
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+
+        // 初期化（ページロード時に試験開始）
+        function initQuiz() {
+            // タイマーを開始
+            startTimer();
+            // 最初の問題を表示
+            updateQuestionDisplay();
+        }
+
+        // ページロード時に初期化を実行
+        initQuiz();
+
+    </script>
+</body>
+</html>
