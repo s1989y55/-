@@ -528,29 +528,44 @@
         document.querySelector('.header-bar').style.visibility = 'hidden'; 
 
         // 新しいクイズセッションを開始
-        function startNewQuizSession() {
-            document.getElementById('start-screen').style.display = 'none';
-            document.querySelector('.header-bar').style.visibility = 'visible';
+function startNewQuizSession() {
+    document.getElementById('start-screen').style.display = 'none';
+    document.querySelector('.header-bar').style.visibility = 'visible';
 
-            // 1. ランダムなパターンを選択 (現在のパターンとは異なるものを選ぶ)
-            let newPatternIndex;
-            do {
-                newPatternIndex = Math.floor(Math.random() * allQuizPatterns.length);
-            } while (newPatternIndex === currentQuizPatternIndex && allQuizPatterns.length > 1);
+    // 1. ランダムなパターンを選択
+    let newPatternIndex;
+    let currentQuizPatternIndex = 0; // NOTE: 既にグローバル定義があるかもしれません
+    
+    do {
+        newPatternIndex = Math.floor(Math.random() * allQuizPatterns.length);
+    } while (newPatternIndex === currentQuizPatternIndex && allQuizPatterns.length > 1);
 
-            currentQuizPatternIndex = newPatternIndex;
-            selectedQuiz = allQuizPatterns[currentQuizPatternIndex];
-            currentQuestionIndex = 0;
-            timeElapsed = 0;
-            userAnswers = []; // 解答をリセット
-            document.getElementById('total-questions').textContent = selectedQuiz.length;
+    currentQuizPatternIndex = newPatternIndex;
+    
+    // ✅ 修正済み: 問題配列をコピーして設定
+    const quizPattern = allQuizPatterns[currentQuizPatternIndex];
+    selectedQuiz = [...quizPattern]; // 50問すべてをコピー
 
-            // 2. タイマーを開始
-            startTimer();
+    // 2. 問題の総数とタイマーを初期化
+    currentQuestionIndex = 0;
+    correctCount = 0; // 正答数をリセット
+    userAnswers = []; // 解答をリセット
+    
+    // ★★★ totalQuestions の値をここで正しく設定 ★★★
+    totalQuestions = selectedQuiz.length; 
 
-            // 3. 最初の問題を表示
-            displayQuestion();
-        }
+    // 3. 画面表示の更新とタイマー開始
+    document.getElementById('total-questions').textContent = totalQuestions;
+    
+    // タイマーをリセット
+    clearInterval(timerInterval);
+    startTime = Date.now();
+    document.getElementById('time-remaining').textContent = '30:00';
+    timerInterval = setInterval(updateTimer, 1000); // または startTimer() を呼び出す
+
+    // 最初の問題を表示
+    showQuestion(); // または displayQuestion();
+}
 
         // タイマーの開始
         function startTimer() {
@@ -667,7 +682,143 @@
                 }
             });
 
-            // 解説を表示
+            // 解説を表示<script><script>// 新しいクイズセッションを開始
+function startNewQuizSession() {
+    document.getElementById('start-screen').style.display = 'none';
+    document.querySelector('.header-bar').style.visibility = 'visible';
+
+    // 1. ランダムなパターンを選択 (現在のパターンとは異なるものを選ぶ)
+    let newPatternIndex;
+    let currentQuizPatternIndex = 0; // ※この行はファイルの他の場所で定義されているか確認
+    
+    do {
+        newPatternIndex = Math.floor(Math.random() * allQuizPatterns.length);
+    } while (newPatternIndex === currentQuizPatternIndex && allQuizPatterns.length > 1);
+
+    currentQuizPatternIndex = newPatternIndex;
+    
+    // ----------------------------------------------------
+    // ✅ 修正箇所 1: 問題配列をシャッフルする処理を追加
+    //   （シャッフル関数がないため、ここでは全問をコピーするだけにします。
+    //   シャッフル機能が必要な場合は、別途 shuffleArray 関数を追加する必要があります。）
+    const quizPattern = allQuizPatterns[currentQuizPatternIndex];
+    selectedQuiz = [...quizPattern]; // 50問すべてをコピー
+
+    // 2. 問題の総数とタイマーを初期化
+    currentQuestionIndex = 0;
+    correctCount = 0; // 正答数をリセット
+    totalQuestions = selectedQuiz.length; // ★★★ totalQuestions の値をここで正しく設定 ★★★
+
+    // 3. 画面表示の更新とタイマー開始
+    document.getElementById('total-questions').textContent = totalQuestions;
+    
+    // タイマーをリセット
+    clearInterval(timerInterval);
+    startTime = Date.now();
+    document.getElementById('time-remaining').textContent = '30:00';
+    timerInterval = setInterval(updateTimer, 1000);
+    
+    // 最初の問題を表示
+    showQuestion();
+
+        // タイマーの開始
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+                timeElapsed++;
+                const remainingTime = totalTimeSeconds - timeElapsed;
+
+                if (remainingTime <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('time-remaining').textContent = "時間切れ";
+                    showFinishScreen(true); // 時間切れで試験終了
+                    return;
+                }
+
+                const minutes = Math.floor(remainingTime / 60);
+                const seconds = remainingTime % 60;
+                document.getElementById('time-remaining').textContent = 
+                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // 問題の表示
+        function displayQuestion() {
+            const quizArea = document.getElementById('quiz-area');
+            const qData = selectedQuiz[currentQuestionIndex];
+            isAnswered = false;
+
+            document.getElementById('current-question-number').textContent = currentQuestionIndex + 1;
+
+            let htmlContent = `
+                <div class="question-text">
+                    問${currentQuestionIndex + 1}. ${qData.q}
+                </div>
+                <ul class="options-list">
+            `;
+
+            qData.options.forEach((option, index) => {
+                htmlContent += `
+                    <li class="option-item" onclick="selectOption(${index}, this)">
+                        <input type="radio" name="quiz-option" id="option-${index}" value="${index}" data-index="${index}">
+                        <label for="option-${index}">${option}</label>
+                    </li>
+                `;
+            });
+
+            htmlContent += `
+                </ul>
+                <div class="explanation" id="explanation-${currentQuestionIndex}">
+                    <strong>解説:</strong> ${qData.explanation}
+                </div>
+                <div class="button-group">
+                    <button class="action-button check-button" id="check-btn" onclick="checkAnswer()" disabled>答え合わせ</button>
+                    <button class="action-button" id="next-btn" onclick="nextQuestion()" disabled>次の問題</button>
+                </div>
+            `;
+            quizArea.innerHTML = htmlContent;
+
+            document.querySelectorAll('input[name="quiz-option"]').forEach(radio => {
+                radio.checked = false;
+            });
+        }
+
+        // 選択肢をクリックしたときの処理
+        function selectOption(selectedIndex, element) {
+            if (isAnswered) return;
+
+            document.querySelectorAll('.option-item').forEach(item => {
+                item.style.backgroundColor = 'white';
+            });
+            element.style.backgroundColor = '#e3f2fd';
+            document.getElementById(`option-${selectedIndex}`).checked = true;
+
+            document.getElementById('check-btn').disabled = false;
+        }
+
+        // 答え合わせ
+        function checkAnswer() {
+            if (isAnswered) return;
+
+            const qData = selectedQuiz[currentQuestionIndex];
+            const selectedOption = document.querySelector('input[name="quiz-option"]:checked');
+            
+            if (!selectedOption) {
+                alert("選択肢を選んでください。");
+                return;
+            }
+
+            isAnswered = true;
+            const selectedIndex = parseInt(selectedOption.value);
+            const items = document.querySelectorAll('.option-item');
+
+            // 採点結果を保存
+            userAnswers[currentQuestionIndex] = {
+                correct: selectedIndex === qData.correctIndex,
+                selectedIndex: selectedIndex,
+                correctIndex: qData.correctIndex
+←上のコードを挿入して、
             document.getElementById(`explanation-${currentQuestionIndex}`).style.display = 'block';
 
             // 次の問題ボタンを有効化
@@ -681,15 +832,18 @@
 
         // 次の問題へ
     function nextQuestion() {
-        currentQuestionIndex++;
-        
-        // ✅ 修正後のコード: 問題の総数 (totalQuestions) に基づいて終了を判定
-        if (currentQuestionIndex < totalQuestions) { 
-            showQuestion();
-        } else {
-            endQuizSession();
-        }
+    // 採点結果の保存など、必要な中間処理があればここに追加
+
+    currentQuestionIndex++;
+    
+    // ✅ 修正後のコード: 問題の総数 (totalQuestions) に基づいて終了を判定
+    if (currentQuestionIndex < totalQuestions) { 
+        displayQuestion(); // 問題表示関数（あなたのコードに合わせて修正）
+    } else {
+        // 全問解答完了で終了
+        showFinishScreen(false); // 終了画面関数（あなたのコードに合わせて修正）
     }
+}
 
         // 試験終了画面の表示
         function showFinishScreen(isTimeout) {
