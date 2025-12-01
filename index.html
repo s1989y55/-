@@ -680,14 +680,16 @@
 
 
         // 次の問題へ
-        function nextQuestion() {
-            if (currentQuestionIndex < selectedQuiz.length - 1) {
-                currentQuestionIndex++;
-                displayQuestion();
-            } else {
-                showFinishScreen(false);
-            }
+    function nextQuestion() {
+        currentQuestionIndex++;
+        
+        // ✅ 修正後のコード: 問題の総数 (totalQuestions) に基づいて終了を判定
+        if (currentQuestionIndex < totalQuestions) { 
+            showQuestion();
+        } else {
+            endQuizSession();
         }
+    }
 
         // 試験終了画面の表示
         function showFinishScreen(isTimeout) {
