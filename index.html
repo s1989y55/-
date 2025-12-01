@@ -55,10 +55,47 @@
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-        .info {
-            margin-top: 30px;
-            font-size: 0.9em;
-            color: #777;
+        .exam-info {
+            margin-top: 20px;
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #ffffff;
+            text-align: left;
+            width: 80%; /* 幅を調整 */
+            max-width: 500px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .exam-info h2 {
+            color: #d32f2f; /* 赤系 */
+            font-size: 1.4em;
+            margin-top: 0;
+            border-bottom: 2px solid #d32f2f;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .exam-info ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .exam-info li {
+            font-size: 1.05em;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .exam-info li:last-child {
+            border-bottom: none;
+        }
+        /* 💡 修正点：項目名の幅を固定し、右揃え（text-align: right）にして揃えを改善しました */
+        .exam-info strong {
+            display: inline-block;
+            width: 110px; /* 項目名に合わせて幅を調整 */
+            color: #004d40;
+            font-weight: bold;
+            text-align: right; /* 項目名を右に寄せる */
+            padding-right: 10px; /* 値との間にスペースを追加 */
         }
     </style>
 </head>
@@ -66,13 +103,19 @@
     <h1>二等無人航空機操縦士 学科試験対策</h1>
     <p>全4パターン（合計200問）の中から、ランダムに1つの模擬試験を開始します。</p>
 
+    <div class="exam-info">
+        <h2>💡 学科試験の概要（二等）</h2>
+        <ul>
+            <li><strong>試験時間</strong>：30分</li>
+            <li><strong>問題数</strong>：50問</li>
+            <li><strong>形式</strong>：択一式</li>
+            <li><strong>合格基準</strong>：40問以上の正解（80%以上の得点）</li>
+        </ul>
+    </div>
+
     <button class="start-button" onclick="startRandomQuiz()">
         🚀 試験開始！
     </button>
-
-    <div class="info">
-        <p>（このファイルは `quiz_1.html`, `quiz_2.html`, `quiz_3.html`, `quiz_4.html` と同じフォルダに配置してください）</p>
-    </div>
 
     <script>
         function startRandomQuiz() {
@@ -81,7 +124,6 @@
             // 対応するファイル名にリダイレクト
             window.location.href = `quiz_${quizNumber}.html`;
         }
-        // index.html自体に問題コンテンツがない場合は、最初にランダムなクイズにリダイレクトする処理は不要と判断し、削除しました。
     </script>
 </body>
 </html>
