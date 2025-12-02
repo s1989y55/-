@@ -968,19 +968,225 @@
             </div>
         </div>
 
-        <div class="quiz-navigation">
-            <button class="nav-button" id="prev-button" disabled>前の問題</button>
-            <span id="question-index">1 / 50</span>
-            <button class="nav-button" id="next-button">次の問題</button>
-            <button class="nav-button" id="submit-button" onclick="submitQuiz()">採点して結果を見る</button>
+        
         </div>
-
+    
+    <div class="quiz-navigation">
+        <button id="prev-button" class="nav-button" disabled>前の問題</button>
+        <span id="question-indicator">1 / 50</span>
+        <button id="next-button" class="nav-button">次の問題</button>
+        <button id="submit-button" class="nav-button" style="background-color: #ff9800; display: none;">採点して終了</button>
     </div>
 
-    <a href="#" class="back-to-top">▲ ページトップに戻る</a>
+    <p class="back-to-top"><a href="index.html">トップへ戻る</a></p>
 
     <script>
-        // ... (JavaScript code omitted for brevity)
+        const quizContainer = document.querySelector('.quiz-container');
+        // すべての問題ブロックを取得
+        const questionBlocks = document.querySelectorAll('.question-block');
+        const totalQuestions = questionBlocks.length;
+        let currentQuestionIndex = 0;
+        let timeLeft = 30 * 60; // 30分を秒に換算
+        let timerInterval;
+
+        const timerDisplay = document.getElementById('timer');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const submitButton = document.getElementById('submit-button');
+        const indicator = document.getElementById('question-indicator');
+        
+        // ユーザーの解答を格納する配列（例: ['A', 'C', 'B', ...]）
+        const userAnswers = new Array(totalQuestions).fill(null);
+
+        // 正解データを取得
+        const correctAnswers = {};
+        questionBlocks.forEach(block => {
+            const qId = block.id; // e.g., 'q1'
+            const answerElement = block.querySelector('.correct-answer');
+            // 【正解】A のようなテキストから 'A' を抽出
+            const correctAnswerText = answerElement ? answerElement.textContent.replace('【正解】', '').trim() : null;
+            correctAnswers[qId] = correctAnswerText;
+            
+            // 選択肢にイベントリスナーを設定
+            block.querySelectorAll('.options li').forEach(option => {
+                // 既存のイベントリスナー（もしあれば）を削除し、新しいものを追加
+                option.removeEventListener('click', handleOptionClick); 
+                option.addEventListener('click', handleOptionClick);
+            });
+        });
+
+        // 選択肢クリック時の処理（解答記録とハイライト）
+        function handleOptionClick(event) {
+            const selectedOption = event.target;
+            const questionId = selectedOption.dataset.question; // e.g., 'q1'
+            const selectedAnswer = selectedOption.dataset.answer; // e.g., 'A'
+            const questionIndex = parseInt(questionId.substring(1)) - 1; // 0-based index
+
+            // 1. 解答を記録
+            userAnswers[questionIndex] = selectedAnswer;
+
+            // 2. 選択肢のハイライトを更新（同じ問題内の他の選択肢をリセット）
+            const currentQuestionBlock = questionBlocks[questionIndex];
+            currentQuestionBlock.querySelectorAll('.options li').forEach(option => {
+                option.classList.remove('selected'); 
+            });
+            selectedOption.classList.add('selected'); // 選択されたことを示す色
+        }
+
+
+        // タイマー機能
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `残り時間: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = '試験終了！時間切れです。';
+                    finishQuiz(true); // 時間切れで終了
+                } else if (timeLeft <= 5 * 60) {
+                    timerDisplay.style.backgroundColor = '#ff9800'; // 5分前はオレンジに
+                }
+            }, 1000);
+        }
+
+        // 問題の表示を更新（一問一答表示のコア機能）
+        function updateQuestionDisplay() {
+            questionBlocks.forEach((block, index) => {
+                block.style.display = (index === currentQuestionIndex) ? 'block' : 'none';
+                block.classList.remove('active');
+            });
+            if (questionBlocks[currentQuestionIndex]) {
+                questionBlocks[currentQuestionIndex].classList.add('active');
+            }
+
+            // インジケーターの更新
+            indicator.textContent = `${currentQuestionIndex + 1} / ${totalQuestions}`;
+
+            // ナビゲーションボタンの状態更新
+            prevButton.disabled = currentQuestionIndex === 0;
+            // 最後の問題の場合は「次の問題」を非表示にし、「採点して終了」を表示
+            nextButton.style.display = currentQuestionIndex < totalQuestions - 1 ? 'inline-block' : 'none';
+            submitButton.style.display = currentQuestionIndex === totalQuestions - 1 ? 'inline-block' : 'none';
+            
+            // 画面を一番上に戻す (タイマーの下)
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+            // 選択済みの選択肢をハイライト
+            const selectedAnswer = userAnswers[currentQuestionIndex];
+            if (questionBlocks[currentQuestionIndex]) {
+                questionBlocks[currentQuestionIndex].querySelectorAll('.options li').forEach(option => {
+                    option.classList.remove('selected'); // リセット
+                    if (option.dataset.answer === selectedAnswer) {
+                        option.classList.add('selected'); // 選択済みハイライト
+                    }
+                });
+            }
+        }
+
+        // 次の問題へ
+        nextButton.addEventListener('click', () => {
+            if (currentQuestionIndex < totalQuestions - 1) {
+                currentQuestionIndex++;
+                updateQuestionDisplay();
+            }
+        });
+
+        // 前の問題へ
+        prevButton.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                updateQuestionDisplay();
+            }
+        });
+        
+        // 採点して終了
+        submitButton.addEventListener('click', () => {
+            if (confirm('試験を終了し、採点結果を表示しますか？')) {
+                clearInterval(timerInterval);
+                finishQuiz(false);
+            }
+        });
+
+        // 採点処理
+        function finishQuiz(isTimeout) {
+            let correctCount = 0;
+            let resultHtml = `<h2>${isTimeout ? '時間切れ！' : '試験終了！'} 採点結果</h2>`;
+            
+            questionBlocks.forEach((block, index) => {
+                const qId = block.id;
+                const userAnswer = userAnswers[index];
+                const correctAnswer = correctAnswers[qId];
+                const isCorrect = userAnswer === correctAnswer;
+                
+                // 採点結果を計算
+                if (isCorrect) {
+                    correctCount++;
+                }
+
+                // 解答と解説を表示
+                block.querySelector('.answer-content').style.display = 'block';
+
+                // 選択肢のハイライトを更新
+                block.querySelectorAll('.options li').forEach(option => {
+                    option.classList.remove('selected', 'correct-highlight', 'incorrect-highlight');
+                    option.style.fontWeight = 'normal';
+                    
+                    if (option.dataset.answer === correctAnswer) {
+                        // 正解を緑で強調
+                        option.classList.add('correct-highlight'); 
+                        option.style.fontWeight = 'bold';
+                    } else if (option.dataset.answer === userAnswer && !isCorrect) {
+                        // 不正解の選択肢を赤で強調
+                        option.classList.add('incorrect-highlight');
+                        option.style.fontWeight = 'bold';
+                    }
+                });
+            });
+
+            const passMark = Math.ceil(totalQuestions * 0.7); // 7割正解を合格基準と仮定
+            const isPassed = correctCount >= passMark;
+            
+            resultHtml += `<p style="font-size: 1.5em; font-weight: bold;">あなたの得点: ${correctCount} / ${totalQuestions} 問</p>`;
+            resultHtml += `<p style="font-size: 1.5em; font-weight: bold; color: ${isPassed ? '#388e3c' : '#d32f2f'};">${isPassed ? '🎉 合格です！' : '残念ながら不合格です。'}</p>`;
+            resultHtml += `<p>合格基準: ${totalQuestions}問中 ${passMark}問以上</p>`;
+            resultHtml += '<p>以下にすべての問題の正解と解説が表示されます。問題を一つずつ見返すか、ページをスクロールして確認してください。</p>';
+
+            // 採点結果を画面に表示し、ナビゲーションを非表示に
+            document.querySelector('h1').insertAdjacentHTML('afterend', resultHtml);
+            document.querySelector('.quiz-navigation').style.display = 'none';
+            document.querySelector('#timer').style.display = 'none';
+
+            // すべての問題を表示
+            questionBlocks.forEach(block => {
+                block.style.display = 'block';
+                block.classList.add('active'); // すべてのスタイルを適用するため
+            });
+            
+            // 画面を一番上に戻す
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+
+        // 初期化（ページロード時に試験開始）
+        function initQuiz() {
+            // タイマーを開始
+            startTimer();
+            // 最初の問題を表示
+            updateQuestionDisplay();
+        }
+
+        // ページロード時に初期化を実行
+        initQuiz();
+
     </script>
 </body>
 </html>
